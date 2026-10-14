@@ -1,0 +1,35 @@
+---
+// /blog/: every published post, newest first, with the tag list.
+import Icon from '../../components/Icon.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import PostCard from '../../components/PostCard.astro';
+import { site } from '../../data/site';
+import { tagCounts, tagLabel, tagUrl } from '../../lib/blog';
+import { getPosts } from '../../lib/posts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = await getPosts();
+const tags = tagCounts(posts);
+---
+
+<BaseLayout title="Blog" description={`Notes from the ${site.name} team on remote work, writing and running calm teams.`}>
+  <PageHeader eyebrow="Blog" title="Notes on calmer teamwork" intro="How remote teams stay in sync without more meetings.">
+    <p class="mt-6">
+      <a href="/rss.xml" class="inline-flex items-center gap-2 text-sm font-medium text-brand hover:underline"><Icon name="rss" size={16} /> Subscribe with RSS</a>
+    </p>
+  </PageHeader>
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <nav aria-label="Tags" class="mb-10 flex flex-wrap justify-center gap-2 text-sm">
+      {
+        tags.map(({ tag, count }) => (
+          <a href={tagUrl(tag)} class="rounded-full border border-line bg-paper px-4 py-1.5 font-medium hover:border-brand hover:text-brand">
+            {tagLabel(tag)} <span class="text-ink-soft">({count})</span>
+          </a>
+        ))
+      }
+    </nav>
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+  </div>
+</BaseLayout>

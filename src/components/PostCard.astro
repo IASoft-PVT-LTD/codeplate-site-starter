@@ -1,0 +1,27 @@
+---
+// One post in a list: cover, title, description, date, reading time and tags.
+import { Image } from 'astro:assets';
+import { formatDate, postUrl, readingMinutes, tagLabel, tagUrl } from '../lib/blog';
+import type { Post } from '../lib/posts';
+
+interface Props {
+  post: Post;
+}
+const { post } = Astro.props;
+const { title, description, date, cover, coverAlt, tags, draft } = post.data;
+---
+
+<article class="group relative flex flex-col overflow-hidden rounded-(--radius-card) border border-line bg-paper">
+  {cover && <Image src={cover} alt={coverAlt ?? ''} width={720} class="aspect-[16/9] w-full object-cover" />}
+  <div class="flex flex-1 flex-col p-6">
+    <p class="text-sm text-ink-soft">
+      <time datetime={date.toISOString()}>{formatDate(date)}</time> · {readingMinutes(post.body ?? '')} min read
+      {draft && <span class="ml-2 rounded bg-bad/10 px-2 py-0.5 text-xs font-semibold text-bad">Draft</span>}
+    </p>
+    <h2 class="mt-2 text-xl font-bold tracking-tight">
+      <a href={postUrl(post.id)} class="after:absolute after:inset-0 group-hover:text-brand">{title}</a>
+    </h2>
+    <p class="mt-2 flex-1 text-ink-soft">{description}</p>
+    {tags.length > 0 && <p class="relative z-10 mt-4 flex flex-wrap gap-2 text-xs">{tags.map((t) => <a href={tagUrl(t)} class="rounded-full bg-brand-soft px-3 py-1 font-medium text-brand hover:underline">{tagLabel(t)}</a>)}</p>}
+  </div>
+</article>

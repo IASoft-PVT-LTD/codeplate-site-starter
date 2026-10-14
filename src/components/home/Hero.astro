@@ -1,0 +1,30 @@
+---
+// Home: the first screen. Words from `hero` in src/data/home.ts.
+import { hero } from '../../data/home';
+import Icon from '../Icon.astro';
+---
+
+<section class="relative isolate overflow-hidden">
+  <div class="hero-glow pointer-events-none absolute inset-x-0 -top-40 -z-10 mx-auto h-[36rem] max-w-4xl rounded-full opacity-70 blur-3xl" aria-hidden="true"></div>
+  <div class="mx-auto max-w-4xl px-4 pt-20 pb-16 text-center sm:px-6 sm:pt-28">
+    <p class="inline-flex items-center gap-2 rounded-full border border-line bg-paper px-4 py-1.5 text-sm font-medium text-ink-soft">
+      <Icon name="sun" size={16} class="text-brand" />
+      {hero.eyebrow}
+    </p>
+    <h1 class="mt-6 text-4xl font-extrabold tracking-tight text-balance sm:text-6xl">{hero.title}</h1>
+    <p class="mx-auto mt-6 max-w-2xl text-lg text-pretty text-ink-soft sm:text-xl">{hero.intro}</p>
+    <div class="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+      <a href={hero.primary.href} class="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 font-semibold text-on-brand hover:bg-brand-strong">
+        {hero.primary.label}
+        <Icon name="arrow" size={18} />
+      </a>
+      <a href={hero.secondary.href} class="rounded-full border border-line bg-paper px-6 py-3 font-semibold text-ink hover:border-brand hover:text-brand">{hero.secondary.label}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-glow {
+    background: radial-gradient(closest-side, var(--color-brand-soft), transparent);
+  }
+</style>

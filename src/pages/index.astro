@@ -1,0 +1,26 @@
+---
+// The home page: its sections, top to bottom. Each section takes its words
+// from src/data/home.ts. Reorder, remove or add sections here
+// (docs/recipes/edit-home-sections.md).
+import Cta from '../components/home/Cta.astro';
+import Faq from '../components/home/Faq.astro';
+import Features from '../components/home/Features.astro';
+import Hero from '../components/home/Hero.astro';
+import LogoStrip from '../components/home/LogoStrip.astro';
+import PricingTeaser from '../components/home/PricingTeaser.astro';
+import Screenshot from '../components/home/Screenshot.astro';
+import Testimonials from '../components/home/Testimonials.astro';
+import { faq } from '../data/home';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout>
+  <Hero />
+  <LogoStrip />
+  <Features />
+  <Screenshot />
+  <Testimonials />
+  <PricingTeaser />
+  <Faq title={faq.title} items={faq.items} />
+  <Cta />
+</BaseLayout>

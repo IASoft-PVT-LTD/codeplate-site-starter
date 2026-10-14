@@ -1,0 +1,50 @@
+---
+// Light/dark switch. The site follows the system theme until the visitor
+// clicks; their choice is saved in localStorage and applied before the page
+// paints by the inline script in src/layouts/BaseLayout.astro (no flash).
+import Icon from './Icon.astro';
+---
+
+<button type="button" class="theme-toggle inline-flex size-9 items-center justify-center rounded-full text-ink-soft hover:bg-brand-soft hover:text-ink" aria-label="Switch between light and dark theme" data-theme-toggle>
+  <Icon name="moon" size={20} class="moon" />
+  <Icon name="sun" size={20} class="sun" />
+</button>
+
+<style is:global>
+  /* Global, not scoped: the icons are rendered by Icon.astro, outside this
+     component's style scope. Show the moon in light mode, the sun in dark. */
+  .theme-toggle .sun {
+    display: none;
+  }
+  :root[data-theme='dark'] .theme-toggle .sun {
+    display: block;
+  }
+  :root[data-theme='dark'] .theme-toggle .moon {
+    display: none;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .theme-toggle .sun {
+      display: block;
+    }
+    :root:not([data-theme='light']) .theme-toggle .moon {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Processed and bundled by Astro (a module script: it runs once per page).
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]')) {
+    button.addEventListener('click', () => {
+      const root = document.documentElement;
+      const current = root.dataset.theme ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      const next = current === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      try {
+        localStorage.setItem('theme', next);
+      } catch {
+        // Storage can be blocked (private mode): the choice lasts for this page only.
+      }
+    });
+  }
+</script>

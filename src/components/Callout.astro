@@ -1,0 +1,16 @@
+---
+// A highlighted box for blog posts. In .mdx posts, write:
+//   <Callout type="tip" title="Optional title">Text…</Callout>
+// (src/pages/blog/[...id].astro passes it to every post, no import needed).
+interface Props {
+  type?: 'note' | 'tip' | 'warning';
+  title?: string;
+}
+const { type = 'note', title } = Astro.props;
+const label = { note: 'Note', tip: 'Tip', warning: 'Warning' }[type];
+---
+
+<aside class:list={['callout not-prose my-6 rounded-xl border p-4', type === 'warning' ? 'border-bad/40 bg-bad/5' : 'border-brand/30 bg-brand-soft']} role="note">
+  <p class:list={['text-sm font-semibold', type === 'warning' ? 'text-bad' : 'text-brand']}>{title ?? label}</p>
+  <div class="mt-1 text-ink [&_a]:underline"><slot /></div>
+</aside>

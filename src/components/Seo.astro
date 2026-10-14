@@ -1,0 +1,68 @@
+---
+// Everything search engines and link previews read, for one page: the title
+// (from the template in src/lib/seo.ts), description, canonical URL, Open Graph
+// and Twitter cards, the RSS link and, for posts, JSON-LD. BaseLayout renders
+// it; pages pass their values through BaseLayout's props.
+import { site } from '../data/site';
+import { absoluteUrl, metaDescription, pageTitle } from '../lib/seo';
+
+export interface SeoProps {
+  /** The page's own title, e.g. "Pricing". Leave it out on the home page. */
+  title?: string;
+  description?: string;
+  /** Path or URL of a 1200×630 image in public/ (default: site.ogImage). */
+  image?: string;
+  imageAlt?: string;
+  /** Keep the page out of search results (404, thank-you pages). */
+  noindex?: boolean;
+  /** Blog posts: published/updated dates, author and tags (adds JSON-LD). */
+  article?: { published: Date; updated?: Date; author: string; tags: string[] };
+}
+
+const { title, description = site.description, image = site.ogImage, imageAlt = `${site.name}: ${site.tagline}`, noindex = false, article } = Astro.props as SeoProps;
+const siteUrl = Astro.site ?? new URL('http://localhost:4321');
+const fullTitle = pageTitle(site.name, site.tagline, title);
+const desc = metaDescription(description);
+const canonical = absoluteUrl(Astro.url.pathname, siteUrl);
+const imageUrl = absoluteUrl(image, siteUrl);
+const jsonLd = article && {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description: desc,
+  image: imageUrl,
+  datePublished: article.published.toISOString(),
+  dateModified: (article.updated ?? article.published).toISOString(),
+  author: { '@type': 'Person', name: article.author },
+  publisher: { '@type': 'Organization', name: site.name, logo: { '@type': 'ImageObject', url: absoluteUrl('/favicon.svg', siteUrl) } },
+  mainEntityOfPage: canonical,
+  keywords: article.tags.join(', '),
+};
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={desc} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex" />}
+
+<meta property="og:site_name" content={site.name} />
+<meta property="og:type" content={article ? 'article' : 'website'} />
+<meta property="og:title" content={title ?? fullTitle} />
+<meta property="og:description" content={desc} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:alt" content={imageAlt} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+{article && <meta property="article:published_time" content={article.published.toISOString()} />}
+{article?.tags.map((t) => <meta property="article:tag" content={t} />)}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title ?? fullTitle} />
+<meta name="twitter:description" content={desc} />
+<meta name="twitter:image" content={imageUrl} />
+<meta name="twitter:image:alt" content={imageAlt} />
+
+<link rel="alternate" type="application/rss+xml" title={`${site.name} blog`} href={absoluteUrl('/rss.xml', siteUrl)} />
+<link rel="sitemap" href="/sitemap-index.xml" />
+{jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />}
