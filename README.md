@@ -1,6 +1,6 @@
 # Astro Website Starter
 
-> **Free CodePlate template, v1.0.2.** This repository mirrors the zip on [codeplate.io](https://codeplate.io/t/site-starter/).
+> **Free CodePlate template, v1.0.3.** This repository mirrors the zip on [codeplate.io](https://codeplate.io/t/site-starter/).
 > Press **Use this template** to start your own repository from it, or [download the zip](https://codeplate.io/t/site-starter/).
 > [All templates](https://codeplate.io/) · [Free License](https://codeplate.io/license/free/) · subscribers get it under the [Pro License](https://codeplate.io/license/pro/) with no credit.
 
