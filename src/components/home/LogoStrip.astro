@@ -1,0 +1,13 @@
+---
+// Home: "teams using it", as typeset names (src/data/home.ts `logos`). To use
+// real logo files, put SVGs in src/assets/logos/ and render them with <Image>
+// and alt text (the company name).
+import { logos } from '../../data/home';
+---
+
+<section class="mx-auto max-w-5xl px-4 py-10 sm:px-6" aria-labelledby="logos-title">
+  <h2 id="logos-title" class="text-center text-sm font-medium text-ink-soft">{logos.title}</h2>
+  <ul class="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
+    {logos.names.map((n) => <li class="text-lg font-bold tracking-tight text-ink-soft">{n}</li>)}
+  </ul>
+</section>

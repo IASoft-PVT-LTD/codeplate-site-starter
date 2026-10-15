@@ -1,0 +1,34 @@
+---
+// /changelog/: every release in src/content/changelog/, newest first.
+import { getCollection, render } from 'astro:content';
+import PageHeader from '../components/PageHeader.astro';
+import { site } from '../data/site';
+import { formatDate } from '../lib/blog';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const entries = (await getCollection('changelog')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const releases = await Promise.all(entries.map(async (e) => ({ entry: e, Content: (await render(e)).Content })));
+---
+
+<BaseLayout title="Changelog" description={`New features, improvements and fixes in each ${site.name} release.`}>
+  <PageHeader eyebrow="Changelog" title="What’s new" intro="New features, improvements and fixes, release by release." />
+  <ol class="mx-auto max-w-3xl space-y-12 px-4 sm:px-6">
+    {
+      releases.map(({ entry, Content }) => (
+        <li id={`v${entry.data.version}`} class="grid gap-2 sm:grid-cols-[10rem_1fr] sm:gap-8">
+          <div class="text-sm text-ink-soft">
+            <span class="font-mono font-semibold text-brand">v{entry.data.version}</span>
+            <br />
+            <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold">{entry.data.title}</h2>
+            <div class="prose mt-3">
+              <Content />
+            </div>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</BaseLayout>

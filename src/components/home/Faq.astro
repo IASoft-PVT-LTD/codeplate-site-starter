@@ -1,0 +1,34 @@
+---
+// Questions and answers as disclosure widgets (no JavaScript). Home passes
+// src/data/home.ts `faq`; the pricing page passes its own list.
+interface Props {
+  title: string;
+  items: { q: string; a: string }[];
+}
+const { title, items } = Astro.props;
+---
+
+<section class="mx-auto max-w-3xl px-4 py-16 sm:px-6" aria-labelledby="faq-title">
+  <h2 id="faq-title" class="text-center text-3xl font-extrabold tracking-tight sm:text-4xl">{title}</h2>
+  <div class="mt-10 divide-y divide-line rounded-(--radius-card) border border-line bg-paper">
+    {
+      items.map((item) => (
+        <details class="group px-6 py-4">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">
+            {item.q}
+            <span class="text-xl leading-none text-brand transition-transform group-open:rotate-45" aria-hidden="true">
+              +
+            </span>
+          </summary>
+          <p class="mt-3 text-ink-soft">{item.a}</p>
+        </details>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  summary::-webkit-details-marker {
+    display: none;
+  }
+</style>

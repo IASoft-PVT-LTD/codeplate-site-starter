@@ -1,0 +1,109 @@
+---
+// The waitlist form (kind="waitlist": email only) and the contact form
+// (kind="contact": name, email, message). Both post to site.formEndpoint
+// (src/pages/api/subscribe.ts → src/lib/form.ts). With JavaScript, the script
+// below sends it in the background and shows the answer in place; without, the
+// browser posts the form and lands on /thanks/. When site.formEndpoint is null
+// (a static site with no server), the form becomes an "email us" link.
+import { site } from '../data/site';
+
+interface Props {
+  kind: 'waitlist' | 'contact';
+  /** Text of the submit button. */
+  button?: string;
+}
+const { kind, button = kind === 'waitlist' ? 'Join the waitlist' : 'Send message' } = Astro.props;
+const endpoint = site.formEndpoint;
+const subject = kind === 'waitlist' ? `Waitlist: ${site.name}` : `Hello ${site.name}`;
+const id = `form-${kind}`;
+const inputClass = 'w-full rounded-xl border border-line bg-paper px-4 py-3 text-ink placeholder:text-ink-soft/80 focus:border-brand focus:outline-none';
+---
+
+{
+  endpoint ? (
+    <form method="post" action={endpoint} class="subscribe-form w-full" data-subscribe-form>
+      <input type="hidden" name="kind" value={kind} />
+      <input type="hidden" name="page" value={Astro.url.pathname} />
+      {/* Honeypot: hidden from people; bots fill it in and are ignored (src/lib/form.ts). */}
+      <div class="hidden" aria-hidden="true">
+        <label>
+          Website <input type="text" name="website" tabindex="-1" autocomplete="off" />
+        </label>
+      </div>
+      {kind === 'contact' ? (
+        <div class="grid gap-4">
+          <div>
+            <label for={`${id}-name`} class="mb-1 block text-sm font-medium">Name</label>
+            <input id={`${id}-name`} name="name" type="text" autocomplete="name" maxlength="100" class={inputClass} />
+          </div>
+          <div>
+            <label for={`${id}-email`} class="mb-1 block text-sm font-medium">Email</label>
+            <input id={`${id}-email`} name="email" type="email" required autocomplete="email" maxlength="200" class={inputClass} />
+          </div>
+          <div>
+            <label for={`${id}-message`} class="mb-1 block text-sm font-medium">Message</label>
+            <textarea id={`${id}-message`} name="message" required rows="6" maxlength="5000" class={inputClass} />
+          </div>
+          <div>
+            <button type="submit" class="rounded-full bg-brand px-6 py-3 font-semibold text-on-brand hover:bg-brand-strong disabled:opacity-60">
+              {button}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div class="flex flex-col gap-3 sm:flex-row">
+          <label for={`${id}-email`} class="sr-only">Email</label>
+          <input id={`${id}-email`} name="email" type="email" required autocomplete="email" maxlength="200" placeholder="you@company.com" class={inputClass} />
+          <button type="submit" class="shrink-0 rounded-full bg-brand px-6 py-3 font-semibold text-on-brand hover:bg-brand-strong disabled:opacity-60">
+            {button}
+          </button>
+        </div>
+      )}
+      <p class="form-status mt-3 min-h-6 text-sm" role="status" aria-live="polite" data-form-status />
+    </form>
+  ) : (
+    <p class="text-ink-soft">
+      <a href={`mailto:${site.email}?subject=${encodeURIComponent(subject)}`} class="inline-block rounded-full bg-brand px-6 py-3 font-semibold text-on-brand hover:bg-brand-strong">
+        Email us at {site.email}
+      </a>
+    </p>
+  )
+}
+
+<script>
+  // Progressive enhancement: send in the background and show the answer.
+  type Answer = { ok: boolean; message?: string; errors?: Record<string, string> };
+
+  for (const form of document.querySelectorAll<HTMLFormElement>('[data-subscribe-form]')) {
+    const status = form.querySelector<HTMLElement>('[data-form-status]')!;
+    const show = (text: string, ok: boolean) => {
+      status.textContent = text;
+      status.classList.toggle('text-ok', ok);
+      status.classList.toggle('text-bad', !ok);
+    };
+    // A no-JavaScript post that failed comes back with ?form=error or ?form=failed.
+    const back = new URLSearchParams(location.search).get('form');
+    if (back) show(back === 'error' ? 'Please check the form and try again.' : 'Something went wrong. Please try again, or email us.', false);
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+      submit.disabled = true;
+      show('Sending…', true);
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { accept: 'application/json' } });
+        const answer = (await res.json()) as Answer;
+        if (answer.ok) {
+          form.reset();
+          show(answer.message ?? 'Thanks!', true);
+        } else {
+          show(Object.values(answer.errors ?? {})[0] ?? 'Please check the form and try again.', false);
+        }
+      } catch {
+        show('Could not reach the server. Check your connection and try again.', false);
+      } finally {
+        submit.disabled = false;
+      }
+    });
+  }
+</script>

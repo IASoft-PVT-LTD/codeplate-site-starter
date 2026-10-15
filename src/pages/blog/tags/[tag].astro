@@ -1,0 +1,31 @@
+---
+// /blog/tags/<tag>/: the posts with one tag. One page per tag in use.
+import PageHeader from '../../../components/PageHeader.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { blogUrl, tagCounts, tagLabel } from '../../../lib/blog';
+import { getPosts, type Post } from '../../../lib/posts';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return tagCounts(posts).map(({ tag }) => ({
+    params: { tag },
+    props: { tag, posts: posts.filter((p) => p.data.tags.includes(tag)) },
+  }));
+}
+
+interface Props {
+  tag: string;
+  posts: Post[];
+}
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`Posts about ${tagLabel(tag).toLowerCase()}`} description={`Blog posts tagged “${tagLabel(tag)}”.`}>
+  <PageHeader eyebrow="Blog" title={tagLabel(tag)} intro={`${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`}>
+    <p class="mt-4"><a href={blogUrl()} class="text-sm font-medium text-brand hover:underline">All posts</a></p>
+  </PageHeader>
+  <div class="mx-auto grid max-w-6xl gap-6 px-4 sm:px-6 md:grid-cols-2 lg:grid-cols-3">
+    {posts.map((post) => <PostCard post={post} />)}
+  </div>
+</BaseLayout>

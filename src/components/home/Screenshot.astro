@@ -1,0 +1,17 @@
+---
+// Home: a product screenshot (src/assets/screenshot.png), resized and converted
+// by Astro's image pipeline at build time.
+import { Image } from 'astro:assets';
+import screenshotImage from '../../assets/screenshot.png';
+import { screenshot } from '../../data/home';
+---
+
+<section class="mx-auto max-w-6xl px-4 py-16 sm:px-6" aria-labelledby="screenshot-title">
+  <div class="mx-auto max-w-2xl text-center">
+    <h2 id="screenshot-title" class="text-3xl font-extrabold tracking-tight text-balance sm:text-4xl">{screenshot.title}</h2>
+    <p class="mt-4 text-lg text-ink-soft">{screenshot.text}</p>
+  </div>
+  <div class="mt-10 overflow-hidden rounded-(--radius-card) border border-line bg-paper p-2 shadow-xl">
+    <Image src={screenshotImage} alt={screenshot.alt} widths={[640, 1080, 1600]} sizes="(min-width: 1152px) 1120px, 100vw" class="h-auto w-full rounded-xl" />
+  </div>
+</section>

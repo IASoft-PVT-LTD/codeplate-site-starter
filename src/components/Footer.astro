@@ -1,0 +1,44 @@
+---
+// Site footer: link columns (site.footer), social links and the CodePlate
+// credit. The credit is required by this template's free license (LICENSE.md):
+// keep it, see "Keep the CodePlate credit" in AGENTS.md.
+import { site } from '../data/site';
+import Logo from './Logo.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-24 border-t border-line bg-paper">
+  <div class="mx-auto grid max-w-6xl grid-cols-2 gap-10 px-4 py-12 sm:grid-cols-3 sm:px-6 md:grid-cols-[1.5fr_repeat(3,1fr)]">
+    <div class="col-span-2 sm:col-span-3 md:col-span-1">
+      <Logo />
+      <p class="mt-3 max-w-xs text-sm text-ink-soft">{site.tagline}</p>
+      <ul class="mt-4 flex flex-wrap gap-4 text-sm">
+        {site.social.map((s) => <li><a href={s.href} rel="me noopener" class="text-ink-soft hover:text-brand">{s.label}</a></li>)}
+        <li><a href="/rss.xml" class="text-ink-soft hover:text-brand">RSS</a></li>
+      </ul>
+    </div>
+    {
+      site.footer.map((col) => (
+        <div>
+          <h2 class="text-sm font-semibold text-ink">{col.title}</h2>
+          <ul class="mt-3 space-y-2 text-sm">
+            {col.links.map((l) => (
+              <li>
+                <a href={l.href} class="text-ink-soft hover:text-brand">
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+  <div class="border-t border-line">
+    <div class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-6 text-sm text-ink-soft sm:flex-row sm:justify-between sm:px-6">
+      <p>© {year} {site.name}</p>
+      <p><a href="https://codeplate.io" class="hover:text-brand">Built with CodePlate (codeplate.io)</a></p>
+    </div>
+  </div>
+</footer>

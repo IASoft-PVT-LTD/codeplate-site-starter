@@ -1,0 +1,26 @@
+---
+// /contact/: the contact form (src/components/SubscribeForm.astro, kind="contact").
+import Icon from '../components/Icon.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SubscribeForm from '../components/SubscribeForm.astro';
+import { site } from '../data/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Contact" description={`Questions about ${site.name}? Send us a message and we will reply within two working days.`}>
+  <PageHeader title="Get in touch" intro="Questions, feedback or a demo for your team: send us a message and we will reply within two working days." />
+  <div class="mx-auto grid max-w-4xl gap-10 px-4 sm:px-6 md:grid-cols-[2fr_1fr]">
+    <div class="rounded-(--radius-card) border border-line bg-paper p-6 sm:p-8">
+      <SubscribeForm kind="contact" />
+    </div>
+    <aside class="text-ink-soft">
+      <h2 class="font-semibold text-ink">Prefer email?</h2>
+      <p class="mt-2">
+        <a href={`mailto:${site.email}`} class="inline-flex items-center gap-2 text-brand hover:underline">
+          <Icon name="mail" size={18} />
+          {site.email}
+        </a>
+      </p>
+    </aside>
+  </div>
+</BaseLayout>

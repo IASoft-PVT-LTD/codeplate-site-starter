@@ -1,0 +1,21 @@
+---
+// The logo: a rising sun and the site name. Colors come from the tokens, so it
+// follows light and dark mode. Replace the <svg> to rebrand
+// (docs/recipes/rebrand-and-retheme.md); keep public/favicon.svg in step.
+import { site } from '../data/site';
+
+interface Props {
+  /** Hide the name next to the mark (e.g. when the logo already contains it). */
+  markOnly?: boolean;
+}
+const { markOnly = false } = Astro.props;
+---
+
+<span class="inline-flex items-center gap-2 font-bold tracking-tight text-ink">
+  <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true" class="shrink-0">
+    <rect width="32" height="32" rx="9" class="fill-brand"></rect>
+    <path d="M8 21a8 8 0 0 1 16 0z" class="fill-on-brand"></path>
+    <path d="M16 6.5v3M7.2 10.2l2.1 2.1M24.8 10.2l-2.1 2.1M6 24h20" class="stroke-on-brand" stroke-width="2.2" stroke-linecap="round" fill="none"></path>
+  </svg>
+  {!markOnly && <span class="text-lg">{site.name}</span>}
+</span>

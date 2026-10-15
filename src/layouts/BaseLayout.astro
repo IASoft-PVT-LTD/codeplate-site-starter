@@ -1,0 +1,40 @@
+---
+// The frame of every page: <head> (SEO tags, theme script, favicon), the skip
+// link, header, main content and footer. Pages pass their SEO values as props.
+import '../styles/global.css';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Seo, { type SeoProps } from '../components/Seo.astro';
+import { site } from '../data/site';
+
+type Props = SeoProps;
+const props = Astro.props;
+---
+
+<!doctype html>
+<html lang={site.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="generator" content={Astro.generator} />
+    <Seo {...props} />
+    <script is:inline>
+      // Apply the theme saved by the toggle before the page paints (no flash).
+      try {
+        const t = localStorage.getItem('theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch {}
+    </script>
+    <slot name="head" />
+  </head>
+  <body class="flex min-h-dvh flex-col bg-canvas text-ink antialiased">
+    <a href="#main" class="sr-only z-50 rounded-lg bg-brand px-4 py-2 text-on-brand focus:not-sr-only focus:fixed focus:top-3 focus:left-3">Skip to content</a>
+    <Header />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

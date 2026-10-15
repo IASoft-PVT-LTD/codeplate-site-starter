@@ -1,0 +1,139 @@
+/* Design tokens and base styles. Every color on the site comes from the tokens
+   below: components use them as Tailwind classes (bg-brand, text-ink, border-line…),
+   never raw colors. Each token holds its light and dark value in light-dark(),
+   so a retheme edits one line per token (docs/recipes/rebrand-and-retheme.md).
+   tests/unit/tokens.test.ts checks the text contrast of both modes. */
+@import 'tailwindcss';
+
+/* The theme follows the system unless the visitor picked one with the toggle
+   (src/components/ThemeToggle.astro sets data-theme on <html>). */
+:root {
+  color-scheme: light dark;
+}
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+@theme {
+  /* light-dark(<light>, <dark>), 6-digit hex (the contrast test reads them). */
+  --color-brand: light-dark(#c2410c, #fb923c); /* buttons, links, focus rings */
+  --color-brand-strong: light-dark(#9a3412, #fdba74); /* button hover */
+  --color-brand-soft: light-dark(#ffedd5, #3a1f0f); /* badges, highlighted cards */
+  --color-on-brand: light-dark(#ffffff, #1c0a02); /* text on brand */
+  --color-ink: light-dark(#1c1917, #f5f1ec); /* main text */
+  --color-ink-soft: light-dark(#57534e, #b8afa6); /* secondary text */
+  --color-line: light-dark(#e7e1da, #36302b); /* borders, dividers */
+  --color-paper: light-dark(#ffffff, #1b1815); /* cards, inputs */
+  --color-canvas: light-dark(#fbf8f4, #12100e); /* page background */
+  --color-ok: light-dark(#15803d, #4ade80); /* success messages */
+  --color-bad: light-dark(#b91c1c, #f87171); /* error messages */
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --radius-card: 1rem;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    min-height: 100dvh;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+}
+
+/* Long-form text: blog posts, legal pages, About. Kept here (not a plugin) so
+   it uses the tokens. */
+@layer components {
+  .prose {
+    line-height: 1.75;
+    max-width: 68ch;
+  }
+  .prose > * + * {
+    margin-top: 1.1em;
+  }
+  .prose h2 {
+    margin-top: 2em;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .prose h3 {
+    margin-top: 1.6em;
+    font-size: 1.2rem;
+    font-weight: 650;
+  }
+  .prose a {
+    color: var(--color-brand);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prose a:hover {
+    color: var(--color-brand-strong);
+  }
+  .prose ul {
+    list-style: disc;
+    padding-left: 1.4em;
+  }
+  .prose ol {
+    list-style: decimal;
+    padding-left: 1.4em;
+  }
+  .prose li + li {
+    margin-top: 0.35em;
+  }
+  .prose blockquote {
+    border-left: 3px solid var(--color-brand);
+    padding-left: 1em;
+    color: var(--color-ink-soft);
+  }
+  .prose code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+  .prose :not(pre) > code {
+    background: var(--color-brand-soft);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+  .prose pre {
+    overflow-x: auto;
+    padding: 1em;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-line);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .prose img {
+    border-radius: 0.75rem;
+  }
+  .prose hr {
+    border-color: var(--color-line);
+  }
+  .prose table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .prose th,
+  .prose td {
+    border-bottom: 1px solid var(--color-line);
+    padding: 0.5em;
+    text-align: left;
+  }
+}
