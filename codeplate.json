@@ -3,7 +3,7 @@
   "spec": 0,
   "id": "site-starter",
   "name": "Astro Website Starter",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "kind": "app",
   "summary": "A fast product or personal website: Astro 7, Tailwind, a blog with RSS, SEO, light/dark theme and a working waitlist form.",
   "tags": [
